@@ -18,8 +18,8 @@ if 'vin_score' not in st.session_state:
 if 'ka_score' not in st.session_state:
     st.session_state.ka_score = 0
 
-player1_button = st.sidebar.button('Vineesh', use_container_width = True)
-player2_button = st.sidebar.button('Kaleb', use_container_width = True)
+player1_button = st.sidebar.button(PLAYER_1, use_container_width = True)
+player2_button = st.sidebar.button(PLAYER_2, use_container_width = True)
 
 if 'player_scored_list' not in st.session_state:
     st.session_state.player_scored_list = []
@@ -56,6 +56,7 @@ with c2:
 if reset:
     del st.session_state.vin_score
     del st.session_state.ka_score
+    del st.session_state.player_scored_list
     st.experimental_rerun()
 
 if end_game:
