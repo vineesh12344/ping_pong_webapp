@@ -6,5 +6,7 @@ Web application to keep track of ping pong scores which are then sent to a datab
 py -m venv env
 env\Scripts\activate
 pip install -r requirements.txt
-
 streamlit run App.py
+
+
+## Run tests
