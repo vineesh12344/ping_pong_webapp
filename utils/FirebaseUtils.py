@@ -7,14 +7,11 @@ from datetime import datetime
 # get path to secrets directory 
 PATH_TO_SECRETS = os.path.abspath(os.path.join(os.path.join(os.path.dirname(__file__), '..'), 'secrets'))
 
-class FirebaseInsertor:
+class FirebaseInit:
     """
-    Utility class for inserting data into firebase
-    Initialization process handled 
-
-    Methods:
+    Utility class for initializing firebase admin sdk
+    Parent class for FirebaseInsertor, FirebaseExtractor
     """
-
     def __init__(self):
         """
         Assumes that a singular .json api key file is present in the secrets directory
@@ -41,6 +38,23 @@ class FirebaseInsertor:
                     print('Error initializing firebase admin sdk, check if .json file is valid')
                     raise Exception('Error initializing firebase admin sdk , check if .json file is valid')
                 
+FIREBASE = FirebaseInit()
+class FirebaseInsertor:
+    """
+    Utility class for inserting data into firebase
+    Assumes that a singular .json api key file is present in the secrets directory
+
+    Initialization process handled 
+
+    Methods:
+    """
+
+    def __init__(self):
+        """
+        Creates attributes:
+            self.db: firestore client
+        """
+        self.db = FIREBASE.db
     
     def addGameData(self, gameData: dict):
         """
@@ -93,3 +107,35 @@ class FirebaseInsertor:
         print('Document ID:', doc_ref.id)
         return doc_ref.id
 
+class FirebaseExtractor:
+    """
+    Utility class for extracting data from firebase, formatting it and returning it
+
+    Methods:
+    """
+    def __init__(self):
+        """
+        Creates attributes:
+            self.db: firestore client
+        """
+        self.db = FIREBASE.db
+    
+    def getGameData(self, game_id: str):
+        """
+        Returns the gameData object from the database
+
+        Args:
+            game_id: the id of the gameData object to be retrieved from the database
+
+        Returns:
+            gameData: the gameData object that was retrieved from the database
+        """
+        # Get the document from Firestore
+        doc_ref = self.db.collection('PingPong').document(game_id)
+        doc = doc_ref.get()
+        if doc.exists:
+            print(f'Document data: {doc.to_dict()}')
+            return doc.to_dict()
+        else:
+            print('No such document!')
+            return None
