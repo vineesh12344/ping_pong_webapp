@@ -15,12 +15,12 @@ class TestAddDisruptionEvent(unittest.TestCase):
         # Instantiate the necessary classes and initialize any data needed for testing
         cls.extractor = FirebaseExtractor()
     
-    def test_addGameData_valid(self):
+    def test_getGameData_byId_valid(self):
         # Prepare valid gameData
         game_id = "game_2023-05-24 23:31:32"
 
         # Add gameData to Firestore
-        game_data = self.extractor.getGameData(game_id=game_id)
+        game_data = self.extractor.getGameData_byId(game_id=game_id)
         print('game_data: ', game_data)
 
         # Assert that the game_id is returned

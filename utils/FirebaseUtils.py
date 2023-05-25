@@ -120,7 +120,7 @@ class FirebaseExtractor:
         """
         self.db = FIREBASE.db
     
-    def getGameData(self, game_id: str):
+    def getGameData_byId(self, game_id: str):
         """
         Returns the gameData object from the database
 
