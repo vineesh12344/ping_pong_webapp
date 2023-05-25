@@ -70,8 +70,13 @@ if 'set_score_list' not in st.session_state:
 if "gameData" not in st.session_state:
     st.session_state.gameData = {}
 
-player1_button = st.button(PLAYER_1, use_container_width = True)
-player2_button = st.button(PLAYER_2, use_container_width = True)
+b1, b2 = st.columns([1, 1])
+
+with b1:
+    player1_button = st.button(PLAYER_1, use_container_width = True, type = "primary")
+
+with b2:
+    player2_button = st.button(PLAYER_2, use_container_width = True, type = "primary")
 
 
 if player1_button:
