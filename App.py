@@ -70,8 +70,8 @@ if 'set_score_list' not in st.session_state:
 if "gameData" not in st.session_state:
     st.session_state.gameData = {}
 
-player1_button = st.sidebar.button(PLAYER_1, use_container_width = True)
-player2_button = st.sidebar.button(PLAYER_2, use_container_width = True)
+player1_button = st.button(PLAYER_1, use_container_width = True)
+player2_button = st.button(PLAYER_2, use_container_width = True)
 
 
 if player1_button:
