@@ -6,6 +6,7 @@ st.title("Ping Pong Tracker")
 
 if 'vin_score' not in st.session_state:
     st.session_state.vin_score = 0
+    
 
 if 'ka_score' not in st.session_state:
     st.session_state.ka_score = 0
