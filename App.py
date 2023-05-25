@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from utils.FirebaseUtils import FirebaseInsertor
+from utils.GameLogic import gameEnd
 
 @st.cache_resource
 def initFirebase():
@@ -9,6 +10,43 @@ def initFirebase():
 
     return inserter
 inserter = initFirebase()
+
+def resetPage():
+    del st.session_state.vin_score
+    del st.session_state.ka_score
+    del st.session_state.set_score_list
+    del st.session_state.gameData
+    st.experimental_rerun()
+
+def endSet():
+    last_score_copy = st.session_state.set_score_list.copy()
+    # Reset set_score_list 
+    st.session_state.set_score_list = []
+    # Add new set key to gameData
+    st.session_state.gameData[set_No+1] = dict(enumerate(last_score_copy,start = 1))
+    st.session_state.vin_score = 0
+    st.session_state.ka_score = 0
+
+def endGame():
+    output = {}
+    for set in st.session_state.gameData.keys():
+        output[set] = list(st.session_state.gameData[set].values())
+
+    # Display game data
+    st.markdown(f"## 🎯 Game Tracker")
+    with st.expander("Game tracker.."):
+        st.table({'sets' : output.keys(),'winners': output.values()})
+
+    gameId = inserter.addGameData(output)
+
+    st.info(f'Game with id {gameId} inserted into your ass', icon="ℹ️")
+
+def populateGamedata():
+    for set in st.session_state.gameData.keys():
+        st.markdown(f"## 🎯 Set {set} Point Tracker")
+        with st.container():
+            with st.expander("Points tracker.."):
+                st.table({"Points":st.session_state.gameData[set].keys(), "Winner" : st.session_state.gameData[set].values()})
 
 st.title("🏓 Ping Pong Tracker")
 
@@ -49,59 +87,28 @@ try:
 except:
     set_No = 0
 
-c1, c2,c3 = st.columns([1, 1,1])
+c1, c3 = st.columns([1, 1])
 
 with c1:
-    reset =  st.button("Reset")
-with c2:
-    # Temporary button to end set ( later add logic to end set when one player reaches 11 points/duce)
-    end_set = st.button("End Set")
+    reset =  st.button("Reset", use_container_width = True)
 
 with c3:
-    end_game = st.button("End Game")
-
-def resetPage():
-    del st.session_state.vin_score
-    del st.session_state.ka_score
-    del st.session_state.set_score_list
-    del st.session_state.gameData
-    st.experimental_rerun()
+    end_game = st.button("End Game", use_container_width = True)
 
 if reset:
     resetPage()
 
-# Logic to end set
-if end_set:
-    print(st.session_state.gameData)
-    last_score_copy = st.session_state.set_score_list.copy()
-    # Reset set_score_list 
-    st.session_state.set_score_list = []
-    # Add new set key to gameData
-    st.session_state.gameData[set_No+1] = dict(enumerate(last_score_copy))
-    st.session_state.vin_score = 0
-    st.session_state.ka_score = 0
+end, winner = gameEnd(st.session_state.vin_score, st.session_state.ka_score )
+
+if end:
+    print("Set ended")
+    endSet()
 
 # Display total score
 st.table({'Person' : ["Vineesh","Kaleb"],"Score":[st.session_state.vin_score,st.session_state.ka_score]})
 
-for set in st.session_state.gameData.keys():
-    st.markdown(f"## 🎯 Set {set} Point Tracker")
-    with st.container():
-        with st.expander("Points tracker.."):
-            st.table(st.session_state.gameData[set])
-
+populateGamedata()
 
 
 if end_game:
-    output = {}
-    for set in st.session_state.gameData.keys():
-        output[set] = list(st.session_state.gameData[set].values())
-
-    # Display game data
-    st.markdown(f"## 🎯 Game Tracker")
-    with st.expander("Game tracker.."):
-        st.table({'sets' : output.keys(),'winners': output.values()})
-
-    gameId = inserter.addGameData(output)
-
-    st.info(f'Game with id {gameId} inserted into your ass', icon="ℹ️")
+    endGame()
